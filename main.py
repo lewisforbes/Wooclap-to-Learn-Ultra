@@ -44,8 +44,8 @@ class Main:
                     else:
                         converted.append(conv_attempt)
 
-            self.write_csv(self.one_line_title(converted),  self.out_dir+"{} {}".format("[converted]", fname),      delim=self.learn_delim)
-            self.write_csv(not_converted,                   self.out_dir+"{} {}".format("[not converted]", fname),  delim=self.wooclap_delim)
+            self.write_csv(self.one_line_title(converted),  self.out_dir+"{} {}".format("[converted]", fname),      self.learn_delim,   True)
+            self.write_csv(not_converted,                   self.out_dir+"{} {}".format("[not converted]", fname),  self.wooclap_delim, False)
 
     ### INPUT/OUTPUT ### 
     def reset_output(self):
@@ -59,7 +59,7 @@ class Main:
             output.append(line)
         return output
     
-    def write_csv(self, lines, fpath, delim):
+    def write_csv(self, lines, fpath, delim, txt):
         if len(lines)==0:
             return
 
@@ -67,7 +67,8 @@ class Main:
             mywriter = csv.writer(file, delimiter=delim)
             mywriter.writerows(lines)
         
-        rename(fpath, fpath.replace(".csv", ".txt"))
+        if txt:
+            rename(fpath, fpath.replace(".csv", ".txt"))
 
 
     ### QUESTION CONVERTERS ### 
