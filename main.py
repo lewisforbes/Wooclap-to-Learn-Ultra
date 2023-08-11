@@ -9,6 +9,10 @@ class Main:
         
         self.in_dir     = "input/"
         self.to_convert = listdir(self.in_dir)
+        for fname in self.to_convert:
+            if fname[-4:]!=".csv":
+                input("Error: must provide only .csv files as input.\nPress enter to exit.")
+                raise Exception()
         self.out_dir    = "output/"
 
         self.blank = '' #blank cell
@@ -220,7 +224,4 @@ class Main:
         print("Unable to convert line in file '{}' ({}):\n{}\n".format(self.current_file, msg, str(line)))
         return None
 
-m = Main()
-# print(m.convert_MCQ(["MCQ", "example title", "", "ans a", "ans b"]))
-# print(m.convert_Matching(["Matching", "example title", "", "A1 --- A2", "B1 --- B2"]))
-# print(m.convert_FillInTheBlanks(["FillInTheBlanks", "example title", "", "roses are [red], violets are [blue], one thing i wanna say to all is huge [uwu]"]))
+Main()
