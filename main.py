@@ -44,8 +44,8 @@ class Main:
                     else:
                         converted.append(conv_attempt)
 
-            self.write_csv(self.one_line_title(converted),       self.out_dir+"{} {}".format("[converted]", fname),      delim=self.learn_delim)
-            self.write_csv(not_converted,   self.out_dir+"{} {}".format("[not converted]", fname),  delim=self.wooclap_delim)
+            self.write_csv(self.one_line_title(converted),  self.out_dir+"{} {}".format("[converted]", fname),      delim=self.learn_delim)
+            self.write_csv(not_converted,                   self.out_dir+"{} {}".format("[not converted]", fname),  delim=self.wooclap_delim)
 
     ### INPUT/OUTPUT ### 
     def reset_output(self):
