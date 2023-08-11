@@ -1,0 +1,13 @@
+Type,Title,Correct,Choice,Choice,Choice,Choice,Choice,Choice,Choice
+MCQ,Example: what is the capital of Uganda?,1,Kampala,Brussels,,,,,
+Poll,Example: Do you think we need to do more to fight climate change?,,Yes,No,,,,,
+Rating,Example: rate the following elements from 1 to 5 (1 = I strongly disagree - 5 = I strongly agree):,,The conference was organised well,The Wi-Fi was good,The speakers were interesting,The venue was easily accessible,The catering service was good,,
+OpenQuestion,Example: Describe today's students in a single word,,,,,,,,
+GuessNumber,Example: how many tennis balls could fit into a train?,100,,,,,,,
+Matching,Example: match the capitals with their countries,,Belgium --- Brussels,Uganda --- Brussels,France --- Brussels,,,,
+Prioritization,Example: How important do you think the following challenges are?,,Climate change,University 3.0,The Future of the European Union,Terrorism and the culture of fear,,,
+Sorting,Example: Sort the following historical time periods in chronological order,,Prehistory,Ancient History,Middle Ages,,,,
+FillInTheBlanks,Example: Fill in this text with the names of colours,,"Roses are [red], violets are [blue].",,,,,,
+Brainstorm,Example: What are your ideas for a better Internet?,,Infrastructure,Services,Regulation,Usability,Accessibility,,
+Concordance,"Example: a 43-year-old man is complaining of aching across the lumbar region. He experienced that pain two days after going swimming, which he rarely does.",,,,3,5,10,15,6
+SCTJudgment,"Example: a 43-year-old man is complaining of aching across the lumbar region. He experienced that pain two days after going swimming, which he rarely does.",,,4,7,10,3,,

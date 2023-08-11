@@ -1,0 +1,6 @@
+MA	Example: what is the capital of Uganda?	Kampala	correct	Brussels	incorrect
+MA	Example: Do you think we need to do more to fight climate change?	Yes	correct	No	correct
+ESS	Example: Describe today's students in a single word	Enter your response here.
+NUM	Example: how many tennis balls could fit into a train?	100.0
+MAT	Example: match the capitals with their countries	Belgium	Brussels	Uganda	Brussels	France	Brussels
+FIB_PLUS	Example: Fill in this text with the names of colours: Roses are [a], violets are [b].	a	red		b	blue	
