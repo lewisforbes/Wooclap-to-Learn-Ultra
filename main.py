@@ -14,6 +14,8 @@ class Main:
                 input("Error: must provide only .csv files as input.\nPress enter to exit.")
                 raise Exception()
         self.out_dir    = "output/"
+        
+        self.title_col = 1
 
         self.blank = '' #blank cell
         self.reset_output()
@@ -34,7 +36,7 @@ class Main:
                     first = False
                     continue
 
-                conv_f = self.qtype_to_converter(line[0])
+                conv_f = self.qtype_lookup(line[0], "function")
                 if conv_f == None:
                     not_converted.append(line)
                 else:
@@ -44,7 +46,7 @@ class Main:
                     else:
                         converted.append(conv_attempt)
 
-            self.write_csv(self.one_line_title(converted),  self.out_dir+"{} {}".format("[converted]", fname),      self.learn_delim,   True)
+            self.write_csv(self.format_title(converted),  self.out_dir+"{} {}".format("[converted]", fname),      self.learn_delim,   True)
             self.write_csv(not_converted,                   self.out_dir+"{} {}".format("[not converted]", fname),  self.wooclap_delim, False)
 
     ### INPUT/OUTPUT ### 
@@ -61,7 +63,7 @@ class Main:
     
     def write_csv(self, lines, fpath, delim, txt):
         if len(lines)==0:
-            return
+            return 
 
         with open(fpath, 'w', newline='') as file:
             mywriter = csv.writer(file, delimiter=delim)
@@ -75,9 +77,8 @@ class Main:
     def convert_MCQ(self, line):
         if len(line)<4:
             return self.error("Line too short.", line)
-        
-        qtype = self.qtype_name_converter(line[0])
-        title = line[1]
+
+        qtype, title = self.get_qtype_title(line)
         correct = line[2].split(",")
         try:
             correct = [int(a.strip())-1 for a in correct] # correct now indexing from 0
@@ -103,8 +104,7 @@ class Main:
         if len(line)<4:
             return self.error("line too short", line)
         
-        qtype = self.qtype_name_converter(line[0])
-        title = line[1]
+        qtype, title = self.get_qtype_title(line)
         options = line[3:]
         output = [qtype, title]
         for opt in options:
@@ -118,8 +118,7 @@ class Main:
         if len(line)<2:
             return self.error("line too short", line)
         
-        qtype = self.qtype_name_converter(line[0])
-        title = line[1]
+        qtype, title = self.get_qtype_title(line)
         placeholder = "Enter your response here."
         return [qtype, title, placeholder] 
 
@@ -127,8 +126,7 @@ class Main:
         if len(line)<3:
             return self.error("Line too short.", line)
         
-        qtype = self.qtype_name_converter(line[0])
-        title = line[1]
+        qtype, title = self.get_qtype_title(line)
         try:
             correct = float(line[2])
         except:
@@ -139,10 +137,9 @@ class Main:
     def convert_Matching(self, line):
         if len(line)<4:
             return self.error("line too short", line)
-        qtype = self.qtype_name_converter(line[0])
-        title = line[1]
-        output = [qtype, title]
         
+        qtype, title = self.get_qtype_title(line)
+        output = [qtype, title]
         for pair in line[3:]:
             if pair == self.blank:
                 break
@@ -157,8 +154,7 @@ class Main:
         if len(line)<4:
             return self.error("line too short", line)
         
-        qtype = self.qtype_name_converter(line[0])
-        title = line[1]
+        qtype, title = self.get_qtype_title(line)
 
         qtext = line[3]
         sols = findall(r"\[(.*?)\]", qtext)
@@ -178,51 +174,57 @@ class Main:
         return output
 
 
-    ### LOOKUPS ### 
-    def qtype_to_converter(self, qtype):
-        qtypes = {"MCQ":                self.convert_MCQ,
-                  "Poll":               self.convert_Poll,
+    ### LOOKUPS ###
+    # rtype (return type) must be "name" or "function"
+    def qtype_lookup(self, qtype, rtype):
+        if not rtype in ["name", "function"]:
+            raise Exception("Invalid rtype provided: " + str(rtype))
+        qtypes = {"MCQ":                ("MA", self.convert_MCQ),
+                  "Poll":               ("MA", self.convert_Poll),
                   "Rating":             None,
-                  "OpenQuestion":       self.convert_OpenQuestion,
-                  "GuessNumber":        self.convert_GuessNumber,
-                  "Matching":           self.convert_Matching,
+                  "OpenQuestion":       ("ESS", self.convert_OpenQuestion),
+                  "GuessNumber":        ("NUM", self.convert_GuessNumber),
+                  "Matching":           ("MAT", self.convert_Matching),
                   "Prioritization":     None,
                   "Sorting":            None,
-                  "FillInTheBlanks":    self.convert_FillInTheBlanks,
+                  "FillInTheBlanks":    ("FIB_PLUS", self.convert_FillInTheBlanks),
                   "Brainstorm":         None,
                   "Concordance":        None,
                   "SCTJudgment":        None}
         if not qtype in qtypes.keys():
-            return self.error("invalid qtype provided", qtype)
-        return qtypes[qtype]
+            return self.error("Invalid question typ provided.", qtype)
         
-    def qtype_name_converter(self, wc_name):
-        qtypes = {"MCQ":               "MA",
-                  "Poll":               "MA",
-                  "Rating":             None,
-                  "OpenQuestion":       "ESS",
-                  "GuessNumber":        "NUM",
-                  "Matching":           "MAT",
-                  "Prioritization":     None,
-                  "Sorting":            None,
-                  "FillInTheBlanks":    "FIB_PLUS",
-                  "Brainstorm":         None,
-                  "Concordance":        None,
-                  "SCTJudgment":        None}
-        if not wc_name in qtypes.keys():
-            return self.error("Invalid qtype provided.", wc_name)
-        return qtypes[wc_name]
+        v = qtypes[qtype]
+
+        if not v:
+            return None
+        if rtype=="name":
+            return v[0]
+        if rtype=="function":
+            return v[1]
+        raise Exception("This should not have been reached.")
     
     ### OTHER ###
-    def one_line_title(self, lines, title_i=1):
+    def format_title(self, lines):
         output = []
         for l in lines:
-            l[title_i] = l[title_i].split("\n")[-1]
+            if not "\n" in l[self.title_col]:
+                output.append(l)
+                continue
+            
+            new_title = ""
+            for t_line in l[self.title_col].split("\n")[1:]:
+                new_title += t_line + " "
+            l[self.title_col] = new_title
             output.append(l)
         return output
 
     def error(self, msg, line):
         print("Unable to convert line in file '{}' ({}):\n{}\n".format(self.current_file, msg, str(line)))
         return None
+
+    def get_qtype_title(self, line):
+        qtype = self.qtype_lookup(line[0], "name")
+        return qtype, line[self.title_col]
 
 Main()
